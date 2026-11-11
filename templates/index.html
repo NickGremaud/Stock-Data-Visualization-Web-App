@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Data Visualizer</title>
+</head>
+<body>
+    <h1>Stock Data Visualizer</h1>
+
+    <form method="POST" action="/">
+        <label for="symbol">Select a Stock Symbol:</label>
+
+        <select id="symbol" name="symbol">
+            {% for symbol in stock_symbols %}
+                <option value="{{ symbol }}">{{ symbol }}</option>
+            {% endfor %}
+        </select>
+                <br><br>
+
+        <label for="chart_type">Select Chart Type:</label>
+
+        <select id="chart_type" name="chart_type">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+        </select>
+        <br><br>
+
+<label for="time_series">Select Time Series:</label>
+
+<select id="time_series" name="time_series">
+    <option value="TIME_SERIES_INTRADAY">Intraday</option>
+    <option value="TIME_SERIES_DAILY">Daily</option>
+    <option value="TIME_SERIES_WEEKLY">Weekly</option>
+    <option value="TIME_SERIES_MONTHLY">Monthly</option>
+</select>
+<br><br>
+
+<label for="start_date">Select Start Date:</label>
+<input type="date" id="start_date" name="start_date" required>
+
+<br><br>
+
+<label for="end_date">Select End Date:</label>
+<input type="date" id="end_date" name="end_date" required>
+<br><br>
+
+<button type="submit">Generate Chart</button>    
+</form>
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+
+{% if chart %}
+    <h2>Stock Chart</h2>
+    <div>
+        {{ chart | safe }}
+    </div>
+{% endif %}
+</body>
+</html>
