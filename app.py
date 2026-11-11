@@ -27,26 +27,55 @@ def index():
         start_date = request.form.get("start_date")
         end_date = request.form.get("end_date")
 
-        try:
-            start = datetime.strptime(start_date, "%Y-%m-%d").date()
-            end = datetime.strptime(end_date, "%Y-%m-%d").date()
+        valid_chart_types = ["bar", "line"]
+        valid_time_series = [
+            "TIME_SERIES_INTRADAY",
+            "TIME_SERIES_DAILY",
+            "TIME_SERIES_WEEKLY",
+            "TIME_SERIES_MONTHLY"
+        ]
 
-            if end <= start:
-                error = "End date must be after start date."
-            else:
-                chart = show_stock_chart(
-                    symbol,
-                    chart_type,
-                    time_series,
-                    start,
-                    end
-                )
+        if not symbol or symbol not in stock_symbols:
+            error = "Please select a valid stock symbol."
 
-                if chart is None:
-                    error = "Unable to generate chart. Check the stock data or date range."
+        elif chart_type not in valid_chart_types:
+            error = "Please select a valid chart type."
 
-        except (ValueError, TypeError):
-            error = "Invalid date. Please select valid start and end dates."
+        elif time_series not in valid_time_series:
+            error = "Please select a valid time series."
+
+        elif not start_date:
+            error = "Please select a start date."
+
+        elif not end_date:
+            error = "Please select an end date."
+
+        else:
+            try:
+                start = datetime.strptime(start_date, "%Y-%m-%d").date()
+            except ValueError:
+                error = "Invalid start date. Please select a valid date."
+
+            if error is None:
+                try:
+                    end = datetime.strptime(end_date, "%Y-%m-%d").date()
+                except ValueError:
+                    error = "Invalid end date. Please select a valid date."
+
+            if error is None:
+                if end <= start:
+                    error = "End date must be after start date."
+                else:
+                    chart = show_stock_chart(
+                        symbol,
+                        chart_type,
+                        time_series,
+                        start,
+                        end
+                    )
+
+                    if chart is None:
+                        error = "Unable to generate chart. Check the stock data or date range."
 
     return render_template(
         "index.html",
